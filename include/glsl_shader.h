@@ -1,5 +1,5 @@
-#ifndef SRC_INCLUDE_GLSL_SHADER_H_
-#define SRC_INCLUDE_GLSL_SHADER_H_
+#ifndef INCLUDE_GLSL_SHADER_H_
+#define INCLUDE_GLSL_SHADER_H_
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -31,4 +31,4 @@ class GLSLShader {
         std::map<std::string, GLuint> uniformList_;
 };
 
-#endif  // SRC_INCLUDE_GLSL_SHADER_H_
+#endif  // INCLUDE_GLSL_SHADER_H_

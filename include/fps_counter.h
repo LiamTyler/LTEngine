@@ -1,5 +1,5 @@
-#ifndef SRC_INCLUDE_FPS_COUNTER_H_
-#define SRC_INCLUDE_FPS_COUNTER_H_
+#ifndef INCLUDE_FPS_COUNTER_H_
+#define INCLUDE_FPS_COUNTER_H_
 
 class FPSCounter {
     public:
@@ -17,4 +17,4 @@ class FPSCounter {
         unsigned int frameCounter_;
 };
 
-#endif  // SRC_INCLUDE_FPS_COUNTER_H_
+#endif  // INCLUDE_FPS_COUNTER_H_

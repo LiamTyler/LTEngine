@@ -1,5 +1,5 @@
-#ifndef SRC_INCLUDE_CAMERA_H_
-#define SRC_INCLUDE_CAMERA_H_
+#ifndef INCLUDE_CAMERA_H_
+#define INCLUDE_CAMERA_H_
 
 #include "include/utils.h"
 
@@ -53,4 +53,4 @@ class Camera {
         mat4 projection_;
 };
 
-#endif  // SRC_INCLUDE_CAMERA_H_
+#endif  // INCLUDE_CAMERA_H_
