@@ -1,54 +1,47 @@
-#include "include/utils.h"
+#include <iostream>
+#include <unordered_map>
+#include "include/rid.h"
+#include "include/material.h"
+#include "include/mesh.h"
+#include "include/resource_manager.h"
+#include "include/game_object.h"
+#include "include/mesh_renderer.h"
+#include "include/renderer.h"
 #include "include/camera.h"
 #include "include/fps_counter.h"
-#include "include/mesh.h"
-#include "include/scene.h"
-#include "include/renderer.h"
-#include "include/game_object.h"
-#include "include/material.h"
-#include <assert.h>
 
 using namespace std;
 
-int main(int arc, char** argv) {
-    // initialize SDL and GLEW and set up window
+Renderer* renderer;
+
+int main() {
     SDL_Window* window = InitAndWindow("Starter Project", 100, 100, 800, 600);
     cout << "vendor: " << glGetString(GL_VENDOR) << endl;
     cout << "renderer: " << glGetString(GL_RENDERER) << endl;
     cout << "version: " << glGetString(GL_VERSION) << endl;
+
+    renderer = new Renderer;
+    renderer->AddShader("mesh", "shaders/regular_phong.vert",
+            "shaders/regular_phong.frag", "");
+
+    ResourceManager* rm = new ResourceManager;
     Material cubeMat = Material(
-            vec3(1.0, .4, .4),
-            vec3(1.0, .4, .4),
-            vec3(.6, .6, .6),
+            glm::vec4(1.0, .4, .4, 1),
+            glm::vec4(1.0, .4, .4, 1),
+            glm::vec4(.6, .6,  .6, 1),
             50);
-    Light light = Light(
-            normalize(vec3(-1, -.5, -.8)),
-            vec3(.3, .3, .3),
-            vec3(.7, .7, .7),
-            vec3(1.0, 1.0, 1.0));
+    Material* mat1 = rm->AllocateResource<Material>(cubeMat);
+    Mesh* mesh = rm->LoadMesh("models/cube.obj");
+    cout << "mesh tris: " << mesh->GetNumTriangles() << endl;
 
-    // set up the particle system
-    Camera camera = Camera(vec3(0, 0, 5), vec3(0, 0, -1), vec3(0, 1, 0), 5, 0.005);
+    GameObject Bjorn = GameObject(Transform(), new MeshRenderer(mesh, mat1, "mesh"));
 
-    GameObject* cube = new GameObject;
-    Mesh mesh("models/cube.obj", 0);
-    mesh.SetMaterial(cubeMat);
-    cube->SetMesh(&mesh);
-
-    Scene scene;
-    scene.AddObject(cube);
-    scene.SetCamera(&camera);
-    scene.SetLight(light);
-
-    Renderer renderer;
-    renderer.Init();
-    renderer.LoadScene(&scene);
+    Camera camera = Camera(glm::vec3(0, 0, 5), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), 5, 0.005);
 
     bool quit = false;
     SDL_Event event;
     SDL_SetRelativeMouseMode(SDL_TRUE);
-    FPSCounter fpsC;
-    fpsC.Init();
+    FPSCounter fpsCounter;
     while (!quit) {
         // Process all input events
         while (SDL_PollEvent(&event)) {
@@ -102,13 +95,13 @@ int main(int arc, char** argv) {
         }
 
         float t = SDL_GetTicks() / 1000.0f;
-        fpsC.StartFrame(t);
-        float dt = fpsC.GetDT();
+        fpsCounter.StartFrame(t);
+        float dt = fpsCounter.GetDT();
         camera.Update(dt);
 
-        renderer.RenderScene(&scene);
+        renderer->RenderScene(camera);
 
-        fpsC.EndFrame();
+        fpsCounter.EndFrame();
 
         SDL_GL_SwapWindow(window);
     }

@@ -2,31 +2,23 @@
 #define INCLUDE_MESH_H_
 
 #include "include/utils.h"
-#include "include/material.h"
+#include "include/resource.h"
 
-class Mesh {
+class Mesh : public Resource {
     public:
         Mesh();
-        Mesh(const std::string& filename, unsigned int id);
+        Mesh(unsigned int numV, unsigned int numT, glm::vec3* verts,
+                glm::vec3* norms, glm::ivec3* indices);
         ~Mesh();
+        friend std::ostream& operator<<(std::ostream& out, const Mesh& m);
 
-        void LoadMesh(const std::string& filename);
+        unsigned int GetNumVertices() const { return numVertices_; }
+        unsigned int GetNumTriangles() const { return numTriangles_; }
+        glm::vec3* GetVertices() const { return vertices_; }
+        glm::vec3* GetNormals() const { return normals_; }
+        glm::ivec3* GetIndices() const { return indices_; }
 
-        void SetMaterial(Material m) { mat_ = m; }
-        Material GetMaterial() { return mat_; }
-        bool IsLoaded() { return loaded_; }
-        unsigned int ModelID() { return modelID_; }
-        unsigned int NumVertices() { return numVertices_; }
-        unsigned int NumTriangles() { return numTriangles_; }
-        glm::vec3* Vertices() { return vertices_; }
-        glm::vec3* Normals() { return normals_; }
-        glm::ivec3* Indices() { return indices_; }
-
-
-    protected:
-        Material mat_;
-        bool loaded_;
-        unsigned int modelID_;
+    private:
         unsigned int numVertices_;
         unsigned int numTriangles_;
         glm::vec3* vertices_;

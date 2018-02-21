@@ -1,119 +1,112 @@
 #include "include/renderer.h"
-#include "include/utils.h"
 
 Renderer::Renderer() {
-    shader_ = nullptr;
 }
 
 Renderer::~Renderer() {
-    if (shader_)
-        delete shader_;
+    for (auto& shader : shaders_)
+        delete shader;
     glDeleteVertexArrays(vaos_.size(), &vaos_[0]);
     glDeleteBuffers(vbos_.size(), &vbos_[0]);
 }
 
-void Renderer::Init() {
-    shader_ = new GLSLShader;
-    shader_->LoadFromFile(GL_VERTEX_SHADER,   "shaders/regular_phong.vert");
-    shader_->LoadFromFile(GL_FRAGMENT_SHADER, "shaders/regular_phong.frag");
-    shader_->CreateAndLinkProgram();
-    shader_->Enable();
-    shader_->AddAttribute("vertex");
-    shader_->AddAttribute("normal");
-    shader_->AddUniform("modelViewMatrix");
-    shader_->AddUniform("normalMatrix");
-    shader_->AddUniform("projectionMatrix");
-    shader_->AddUniform("ka");
-    shader_->AddUniform("kd");
-    shader_->AddUniform("ks");
-    shader_->AddUniform("Ia");
-    shader_->AddUniform("Id");
-    shader_->AddUniform("Is");
-    shader_->AddUniform("specular");
-    shader_->AddUniform("lightInEyeSpace");
+Shader* Renderer::GetShader(const std::string& id) {
+    assert(shader_mapping_.find(id) != shader_mapping_.end());
+
+    return shaders_[shader_mapping_[id]];
 }
 
-void Renderer::LoadScene(Scene* scene) {
-    std::vector<GameObject*> gameObjects = scene->GameObjects();
-    GameObject* obj = gameObjects[0];
-    Mesh* mesh = obj->GetMesh();
+Shader* Renderer::AddShader(const std::string& id, const std::string& vShader,
+                     const std::string& fShader, const std::string& cShader) {
+    Shader* shader = new Shader(id);
+    if (vShader != "")
+        shader->LoadFromFile(GL_VERTEX_SHADER, vShader);
+    if (fShader != "")
+        shader->LoadFromFile(GL_FRAGMENT_SHADER, fShader);
+    if (cShader != "")
+        shader->LoadFromFile(GL_COMPUTE_SHADER, cShader);
+    shader->CreateAndLinkProgram();
 
-    int vaoIndex = vaos_.size();
-    int vboIndex = vbos_.size();
-    vaos_.push_back(0);
-    vbos_.push_back(0);
-    vbos_.push_back(0);
-    vbos_.push_back(0);
+    // just to test mesh vao
+    shader->Enable();
+    shader->AddAttribute("vertex");
+    shader->AddAttribute("normal");
+    shader->AddUniform("modelViewMatrix");
+    shader->AddUniform("normalMatrix");
+    shader->AddUniform("projectionMatrix");
+    shader->AddUniform("ka");
+    shader->AddUniform("kd");
+    shader->AddUniform("ks");
+    shader->AddUniform("Ia");
+    shader->AddUniform("Id");
+    shader->AddUniform("Is");
+    shader->AddUniform("specular");
+    shader->AddUniform("lightInEyeSpace");
+    // end
 
-    // generate vao + 3 vbos for: verts, norms, indices
-    glGenVertexArrays(1, &vaos_[vaoIndex]);
-    glBindVertexArray(vaos_[vaoIndex]);
-    glGenBuffers(3, &vbos_[vboIndex]);
+    shaders_.push_back(shader);
+    shader_mapping_[id] = shaders_.size() - 1;
+    ShaderGroup sg;
+    sg.shader_index = shaders_.size() - 1;
+    shaderGroups_.push_back(sg);
 
-    // vertices
-    glBindBuffer(GL_ARRAY_BUFFER, vbos_[vboIndex + 0]);
-    glBufferData(GL_ARRAY_BUFFER, mesh->NumVertices() * sizeof(vec3),
-            mesh->Vertices(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray((*shader_)["vertex"]);
-    glVertexAttribPointer((*shader_)["vertex"], 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // normals
-    glBindBuffer(GL_ARRAY_BUFFER, vbos_[vboIndex + 1]);
-    glBufferData(GL_ARRAY_BUFFER, mesh->NumVertices() * sizeof(vec3),
-            mesh->Normals(), GL_STATIC_DRAW);
-    glEnableVertexAttribArray((*shader_)["normal"]);
-    glVertexAttribPointer((*shader_)["normal"], 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-    // indices
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos_[vboIndex + 2]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->NumTriangles() * sizeof(ivec3),
-            mesh->Indices(), GL_STATIC_DRAW);
+    return shader;
 }
 
-void Renderer::RenderGameObject(GameObject* obj, glm::mat4& V) {
-    Mesh* mesh = obj->GetMesh();
-    GLuint vao = vaos_[mesh->ModelID()];
-    glBindVertexArray(vao);
-    Material m = mesh->GetMaterial();
-    glUniform4fv((*shader_)["ka"], 1, value_ptr(m.ka));
-    glUniform4fv((*shader_)["kd"], 1, value_ptr(m.kd));
-    glUniform4fv((*shader_)["ks"], 1, value_ptr(m.ks));
-    glUniform1f((*shader_)["specular"], m.specular);
-
-    // glm::mat4 model = obj->ModelMatrix();
-    glm::mat4 model = mat4(1);
-    glm::mat4 MV = V * model;
-    glm::mat4 normalMatrix = glm::transpose(glm::inverse(MV));
-    glUniformMatrix4fv((*shader_)["modelViewMatrix"], 1, GL_FALSE, value_ptr(MV));
-    glUniformMatrix4fv((*shader_)["normalMatrix"], 1, GL_FALSE, value_ptr(normalMatrix));
-    glDrawElements(GL_TRIANGLES, mesh->NumTriangles() * 3, GL_UNSIGNED_INT, 0);
+bool Renderer::VaoExists(RID r) {
+    return vao_mapping_.find(r) != vao_mapping_.end();
 }
 
-// assumes that everything has a vao / whatever already
-void Renderer::RenderScene(Scene* scene) {
-    shader_->Enable();
+GLuint Renderer::CreateAndRegisterVao(const std::string& shaderID, RID r, RenderComponent* rc) {
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    vaos_.push_back(vao);
+    VaoGroup group;
+    group.vao_index = vaos_.size() - 1;
+    group.objects_.push_back(rc);
+    ShaderGroup& sg = shaderGroups_[shader_mapping_[shaderID]];
+    sg.vaoGroups_.push_back(group);
+    struct Map m;
+    m.shaderGroup = shader_mapping_[shaderID];
+    m.vaoGroup = sg.vaoGroups_.size() - 1;
+    vao_mapping_[r] = m;
+    return vao;
+}
+
+GLuint* Renderer::CreateVbos(int num) {
+    vbos_.resize(vbos_.size() + num);
+    glGenBuffers(num, &vbos_[vbos_.size() - num]);
+
+    return &vbos_[vbos_.size() - num];
+}
+
+void Renderer::RenderScene(Camera& camera) {
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glm::mat4 V = camera.View();
+    glm::mat4 P = camera.Proj();
 
-    // Camera info
-    Camera* camera = scene->GetCamera();
-    glm::mat4 V = camera->View();
-    glm::mat4 P = camera->Proj();
-    glUniformMatrix4fv((*shader_)["projectionMatrix"], 1, GL_FALSE, value_ptr(P));
+    // hard code the light right now
+    glm::vec4 lightDir = glm::normalize(glm::vec4(-1, -.5, -.8, 0));
+    glm::vec4 Ia = glm::vec4(.3, .3, .3, 1);
+    glm::vec4 Id = glm::vec4(.3, .3, .3, 1);
+    glm::vec4 Is = glm::vec4(.3, .3, .3, 1);
 
-    // Lights
-    Light light = scene->GetLight();
-    Material m = light.GetMaterial();
-    glUniform4fv((*shader_)["Ia"], 1, value_ptr(m.ka));
-    glUniform4fv((*shader_)["Id"], 1, value_ptr(m.kd));
-    glUniform4fv((*shader_)["Is"], 1, value_ptr(m.ks));
-    glUniform4fv((*shader_)["lightInEyeSpace"], 1, value_ptr(V * light.Dir()));
-    
-    std::vector<GameObject*> gameObjects = scene->GameObjects();
-    int i = 0;
-    for (std::vector<GameObject*>::iterator obj = gameObjects.begin();
-            obj != gameObjects.end();
-            ++obj) {
-        RenderGameObject(*obj, V);
+    for (auto& sg : shaderGroups_) {
+        Shader& shader = *shaders_[sg.shader_index];
+        shader.Enable();
+        // bind uniforms
+        glUniform4fv(shader["Ia"], 1, value_ptr(Ia));
+        glUniform4fv(shader["Id"], 1, value_ptr(Id));
+        glUniform4fv(shader["Is"], 1, value_ptr(Is));
+        glUniform4fv(shader["lightInEyeSpace"], 1, value_ptr(V * lightDir));
+        glUniformMatrix4fv(shader["projectionMatrix"], 1, GL_FALSE, value_ptr(P));
+
+        for (auto& vg : sg.vaoGroups_) {
+            glBindVertexArray(vaos_[vg.vao_index]);
+            for (auto& obj : vg.objects_) {
+                obj->Render(shader, V);
+            }
+        }
     }
 }

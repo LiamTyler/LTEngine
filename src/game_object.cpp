@@ -1,18 +1,24 @@
 #include "include/game_object.h"
 
-GameObject::GameObject() {
-    pos_ = vec3(0, 0, 0);
-    rotation_ = vec3(0, 0, 0);
-    scale_ = vec3(1, 1, 1);
+GameObject::GameObject() : GameObject(
+        Transform(),
+        nullptr)
+{
 }
 
-glm::mat4 GameObject::ModelMatrix() {
-    mat4 model(1);
-    model = translate(model, pos_);
-    model = rotate(model, rotation_.z, vec3(0, 0, 1));
-    model = rotate(model, rotation_.y, vec3(0, 1, 0));
-    model = rotate(model, rotation_.x, vec3(1, 0, 0));
-    model = scale(model, scale_);
+GameObject::GameObject(Transform t, RenderComponent* r) {
+    transform = t;
+    renderComponent = r;
+    renderComponent->gameObject = this;
+    renderComponent->Start();
+}
 
-    return model;
+GameObject::~GameObject() {
+    if (renderComponent)
+        delete renderComponent;
+}
+
+void GameObject::Update() {
+    if (renderComponent)
+        renderComponent->Update();
 }

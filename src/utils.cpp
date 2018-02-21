@@ -1,10 +1,11 @@
 #include "include/utils.h"
-#include "include/image.h"
+// #include "include/image.h"
 
+/*
 GLuint LoadTexture(string path) {
     Image image;
     if (!image.LoadImage(path)) {
-        cout << "Failed to load tex: " << path << endl;
+        std::cerr << "Failed to load tex: " << path << std::endl;
         return -1;
     }
 
@@ -18,10 +19,11 @@ GLuint LoadTexture(string path) {
 
     return tex;
 }
+*/
 
-SDL_Window* InitAndWindow(string title, int ox, int oy, int w, int h) {
+SDL_Window* InitAndWindow(const std::string& title, int ox, int oy, int w, int h) {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        cout << "Failed to init SDL" << endl;
+        std::cerr << "Failed to init SDL" << std::endl;
         return nullptr;
     }
 
@@ -32,22 +34,22 @@ SDL_Window* InitAndWindow(string title, int ox, int oy, int w, int h) {
 
     SDL_Window* window = SDL_CreateWindow(title.c_str(), ox, oy, w, h, SDL_WINDOW_OPENGL);
     if (window == NULL) {
-        cout << "Failed to create an SDL2 window" << endl;
+        std::cerr << "Failed to create an SDL2 window" << std::endl;
         exit(1);
     }
     SDL_GLContext context = SDL_GL_CreateContext(window);
     if (context == NULL) {
-        cout << "Failed to create an opengl context" << endl;
+        std::cerr << "Failed to create an opengl context" << std::endl;
         exit(1);
     }
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) {
-        cout << "Failed to init GLEW" << endl;
+        std::cerr << "Failed to init GLEW" << std::endl;
         exit(1);
     }
     if (SDL_GL_SetSwapInterval(1) < 0)
-        cout << "Failed to set vsync" << endl;
+        std::cerr << "Failed to set vsync" << std::endl;
 
     glEnable(GL_DEPTH_TEST);
 

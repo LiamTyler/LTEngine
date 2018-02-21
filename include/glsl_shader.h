@@ -1,5 +1,5 @@
-#ifndef INCLUDE_GLSL_SHADER_H_
-#define INCLUDE_GLSL_SHADER_H_
+#ifndef INCLUDE_SHADER_H_
+#define INCLUDE_SHADER_H_
 
 #include <GL/glew.h>
 #include <GL/gl.h>
@@ -7,10 +7,11 @@
 #include <map>
 #include <vector>
 
-class GLSLShader {
+class Shader {
     public:
-        GLSLShader();
-        ~GLSLShader();
+        Shader();
+        Shader(const std::string& name);
+        ~Shader();
         void LoadFromString(GLenum shaderType, const std::string& source);
         void LoadFromFile(GLenum shaderType, const std::string& filename);
         void CreateAndLinkProgram();
@@ -21,14 +22,17 @@ class GLSLShader {
         GLuint operator[] (const std::string& name);
         void DeleteShaderProgram();
 
-        GLuint GetProgram() { return program_; }
-        void SetProgram(GLuint p) { program_ = p; }
+        std::string& ID() { return id_; }
+
+        // GLuint GetProgram() { return program_; }
+        // void SetProgram(GLuint p) { program_ = p; }
 
     protected:
+        std::string id_;
         GLuint program_;
         std::vector<GLuint> shaders_;
         std::map<std::string, GLuint> attributeList_;
         std::map<std::string, GLuint> uniformList_;
 };
 
-#endif  // INCLUDE_GLSL_SHADER_H_
+#endif  // INCLUDE_SHADER_H_

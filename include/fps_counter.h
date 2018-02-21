@@ -5,7 +5,6 @@ class FPSCounter {
     public:
         FPSCounter();
         ~FPSCounter();
-        void Init();
         void StartFrame(float dt);
         void EndFrame();
         float GetDT() { return time_ - prevTime_; }

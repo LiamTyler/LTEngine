@@ -10,12 +10,6 @@ FPSCounter::FPSCounter() {
 
 FPSCounter::~FPSCounter() {}
 
-void FPSCounter::Init() {
-    time_ = 0;
-    frameCounter_ = 0;
-    fpsTime_ = 0;
-}
-
 void FPSCounter::StartFrame(float time) {
     time_ = time;
 }

@@ -3,15 +3,18 @@
 #include <fstream>
 #include <iomanip>
 
-GLSLShader::GLSLShader() {
+Shader::Shader() : Shader("Null Shader") {}
+
+Shader::Shader(const std::string& name) {
+    id_ = name;
     program_ = 0;
 }
 
-GLSLShader::~GLSLShader() {
+Shader::~Shader() {
     DeleteShaderProgram();
 }
 
-void GLSLShader::LoadFromString(GLenum shaderType, const std::string& source) {
+void Shader::LoadFromString(GLenum shaderType, const std::string& source) {
     GLuint newShader = glCreateShader(shaderType);
     const char * sourcePointer = source.c_str();
     glShaderSource(newShader, 1, &sourcePointer, NULL);
@@ -33,7 +36,7 @@ void GLSLShader::LoadFromString(GLenum shaderType, const std::string& source) {
     shaders_.push_back(newShader);
 }
 
-void GLSLShader::LoadFromFile(GLenum shaderType, const std::string& filename) {
+void Shader::LoadFromFile(GLenum shaderType, const std::string& filename) {
     std::ifstream in(filename);
     if (in.fail()) {
         std::cerr << "Failed to open the shader file: " << filename << std::endl;
@@ -46,7 +49,7 @@ void GLSLShader::LoadFromFile(GLenum shaderType, const std::string& filename) {
     LoadFromString(shaderType, file);
 }
 
-void GLSLShader::CreateAndLinkProgram() {
+void Shader::CreateAndLinkProgram() {
     program_ = glCreateProgram();
     for (int i = 0; i < shaders_.size(); i++)
         glAttachShader(program_, shaders_[i]);
@@ -72,23 +75,23 @@ void GLSLShader::CreateAndLinkProgram() {
     shaders_.clear();
 }
 
-void GLSLShader::Enable() {
+void Shader::Enable() {
     glUseProgram(program_);
 }
 
-void GLSLShader::Disable() {
+void Shader::Disable() {
     glUseProgram(0);
 }
 
-void GLSLShader::AddAttribute(const std::string& attribute) {
+void Shader::AddAttribute(const std::string& attribute) {
     attributeList_[attribute] = glGetAttribLocation(program_, attribute.c_str());
 }
 
-void GLSLShader::AddUniform(const std::string& uniform) {
+void Shader::AddUniform(const std::string& uniform) {
     uniformList_[uniform] = glGetUniformLocation(program_, uniform.c_str());
 }
 
-GLuint GLSLShader::operator[] (const std::string& name) {
+GLuint Shader::operator[] (const std::string& name) {
     std::map<std::string, GLuint>::iterator it;
     it = uniformList_.find(name);
     if (it != uniformList_.end())
@@ -100,6 +103,6 @@ GLuint GLSLShader::operator[] (const std::string& name) {
     return -1;
 }
 
-void GLSLShader::DeleteShaderProgram() {
+void Shader::DeleteShaderProgram() {
     glDeleteProgram(program_);
 }
