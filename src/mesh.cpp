@@ -19,12 +19,6 @@ Mesh::Mesh(unsigned int numV, unsigned int numT, glm::vec3* verts,
 }
 
 Mesh::~Mesh() {
-    if (vertices_)
-        delete [] vertices_;
-    if (normals_)
-        delete [] normals_;
-    if (indices_)
-        delete [] indices_;
 }
 
 std::ostream& operator<<(std::ostream& out, const Mesh& m) {

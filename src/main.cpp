@@ -63,7 +63,7 @@ int main() {
             glm::vec4(.6, .6,  .6, 1),
             50);
     Material* mat1 = rm->AllocateResource<Material>(cubeMat);
-    Mesh* mesh = rm->LoadMesh("models/cube.obj");
+    Mesh* mesh = rm->LoadMesh("models/sphere.obj");
     cout << "mesh tris: " << mesh->GetNumTriangles() << endl;
 
     GameObject Bjorn = GameObject(Transform(), new MeshRenderer(mesh, mat1, "mesh"));
