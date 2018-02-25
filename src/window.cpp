@@ -60,3 +60,10 @@ void Window::Init() {
 void Window::SwapWindow() {
     SDL_GL_SwapWindow(sdlWindow_);
 }
+
+void Window::SetRelativeMouse(bool b) {
+    if (b)
+        SDL_SetRelativeMouseMode(SDL_TRUE);
+    else
+        SDL_SetRelativeMouseMode(SDL_FALSE);
+}

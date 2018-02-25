@@ -11,6 +11,7 @@ class Window {
         void SwapWindow();
         SDL_Window* GetWindow() { return sdlWindow_; }
         SDL_GLContext GetContext() { return glContext_; }
+        void SetRelativeMouse(bool b);
 
     protected:
         std::string title_;

@@ -3,12 +3,15 @@
 Input::Input() {
 }
 
-void Input::HandleInput() {
+bool Input::HandleInput() {
     memset(pressed_, false, sizeof(pressed_));
     memset(released_, false, sizeof(released_));
+    mouse.Update();
+    mouseEvent_ = false;
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_QUIT) {
+            return true;
         } else if (event.type == SDL_KEYDOWN && event.key.repeat == 0) {
             switch (event.key.keysym.sym) {
                 case SDLK_a:
@@ -265,6 +268,8 @@ void Input::HandleInput() {
                     break;
                 case SDLK_DOWN:
                     pressed_[K_DOWN] = true;
+                    break;
+                default:
                     break;
             }
         } else if (event.type == SDL_KEYUP) {
@@ -524,13 +529,48 @@ void Input::HandleInput() {
                 case SDLK_DOWN:
                     released_[K_DOWN] = true;
                     break;
+                default:
+                    break;
             }
         } else if (event.type == SDL_MOUSEMOTION) {
-            // handle mouse events
+            mouseEvent_ = true;
             float dx = event.motion.xrel;
             float dy = event.motion.yrel;
+            mouse.dx = dx;
+            mouse.dy = dy;
+            mouse.x = event.motion.x;
+            mouse.y = event.motion.y;
+        } else if (event.type == SDL_MOUSEBUTTONDOWN) {
+            switch(event.button.button) {
+                case SDL_BUTTON_LEFT:
+                    pressed_[M_LEFT] = true;
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    pressed_[M_MIDDLE] = true;
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    pressed_[M_RIGHT] = true;
+                    break;
+                default:
+                    break;
+            }
+        } else if (event.type == SDL_MOUSEBUTTONUP) {
+            switch(event.button.button) {
+                case SDL_BUTTON_LEFT:
+                    released_[M_LEFT] = true;
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    released_[M_MIDDLE] = true;
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    released_[M_RIGHT] = true;
+                    break;
+                default:
+                    break;
+            }
         }
     }
+    return false;
 }
 
 bool Input::KeyPressed(KeyCode k) {

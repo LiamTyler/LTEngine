@@ -98,19 +98,38 @@ enum KeyCode : unsigned int {
     K_UP,
     K_DOWN,
 
+    // mouse
+    M_LEFT,
+    M_MIDDLE,
+    M_RIGHT,
+
     K_TOTAL,
+};
+
+class Mouse {
+    public:
+        Mouse() : x(0), y(0), dx(0), dy(0) {}
+        void Update() { dx = 0; dy = 0; }
+        float x;
+        float y;
+        float dx;
+        float dy;
 };
 
 class Input {
     public:
         Input();
-        void HandleInput();
+        bool HandleInput();
         bool KeyPressed(KeyCode k);
         bool KeyReleased(KeyCode k);
+        bool MouseMotionEvent() { return mouseEvent_; }
+
+        Mouse mouse;
 
     protected:
         bool pressed_[K_TOTAL];
         bool released_[K_TOTAL];
+        bool mouseEvent_;
 };
 
 #endif  // INCLUDE_INPUT_H_
