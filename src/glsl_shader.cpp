@@ -16,7 +16,7 @@ Shader::~Shader() {
 
 void Shader::LoadFromString(GLenum shaderType, const std::string& source) {
     GLuint newShader = glCreateShader(shaderType);
-    const char * sourcePointer = source.c_str();
+    char const * sourcePointer = source.c_str();
     glShaderSource(newShader, 1, &sourcePointer, NULL);
     glCompileShader(newShader);
 
@@ -25,14 +25,12 @@ void Shader::LoadFromString(GLenum shaderType, const std::string& source) {
 
     glGetShaderiv(newShader, GL_COMPILE_STATUS, &Result);
     glGetShaderiv(newShader, GL_INFO_LOG_LENGTH, &InfoLogLength);
-    if ( InfoLogLength > 0 ) {
-        char* ErrorMessage = new char[InfoLogLength + 1];
-        glGetProgramInfoLog(program_, InfoLogLength, NULL, ErrorMessage);
-        std::cerr << "Error while loading shader: " << std::endl;
-        std::cerr << ErrorMessage << std::endl;
-        delete [] ErrorMessage;
-        return;
+    if ( InfoLogLength > 0 ){
+        std::vector<char> ErrorMessage(InfoLogLength+1);
+        glGetShaderInfoLog(newShader, InfoLogLength, NULL, &ErrorMessage[0]);
+        printf("Error while loading shader:\n%s\n\n", &ErrorMessage[0]);
     }
+
     shaders_.push_back(newShader);
 }
 
@@ -61,11 +59,10 @@ void Shader::CreateAndLinkProgram() {
     glGetProgramiv(program_, GL_LINK_STATUS, &Result);
     glGetProgramiv(program_, GL_INFO_LOG_LENGTH, &InfoLogLength);
     if ( InfoLogLength > 0 ){
-        char* ErrorMessage = new char[InfoLogLength + 1];
-        glGetProgramInfoLog(program_, InfoLogLength, NULL, ErrorMessage);
-        std::cerr << "Error while compiling and linking program: " << std::endl;
-        std::cerr << ErrorMessage << std::endl;
-        delete [] ErrorMessage;
+        std::vector<char> ErrorMessage(InfoLogLength + 1);
+        glGetProgramInfoLog(program_, InfoLogLength, NULL, &ErrorMessage[0]);
+        printf("Error while compiling and linking program:\n%s\n\n", &ErrorMessage[0]);
+        return;
     }
 
     for (int i = 0; i < shaders_.size(); i++) {

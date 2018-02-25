@@ -21,6 +21,7 @@ class Shader {
         void AddUniform(const std::string& uniform);
         GLuint operator[] (const std::string& name);
         void DeleteShaderProgram();
+        GLuint GetProgram() { return program_; }
 
         std::string& ID() { return id_; }
 
