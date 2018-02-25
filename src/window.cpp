@@ -11,6 +11,12 @@ Window::Window(const std::string& title, int w, int h) {
     Init();
 }
 
+Window::~Window() {
+    SDL_GL_DeleteContext(glContext_);
+    SDL_DestroyWindow(sdlWindow_);
+    SDL_Quit();
+}
+
 void Window::Init() {
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::cerr << "Failed to init SDL" << std::endl;

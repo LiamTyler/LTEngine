@@ -10,6 +10,20 @@ Shader::Shader(const std::string& name) {
     program_ = 0;
 }
 
+Shader::Shader(const std::string& name, const std::string& vname,
+               const std::string& fname, const std::string& cname) {
+    id_ = name;
+    program_ = 0;
+    if (vname != "")
+        LoadFromFile(GL_VERTEX_SHADER, vname);
+    if (fname != "")
+        LoadFromFile(GL_FRAGMENT_SHADER, fname);
+    if (cname != "")
+        LoadFromFile(GL_COMPUTE_SHADER, cname);
+    CreateAndLinkProgram();
+    AutoDetectVariables();
+}
+
 Shader::~Shader() {
     DeleteShaderProgram();
 }
@@ -70,6 +84,57 @@ void Shader::CreateAndLinkProgram() {
         glDeleteShader(shaders_[i]);
     }
     shaders_.clear();
+}
+
+void Shader::AutoDetectVariables() {
+    Enable();
+    GLint i;
+    GLint count;
+    GLint size;
+    GLenum type;
+    GLsizei attribBufSize;
+    glGetProgramiv(program_, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &attribBufSize);
+    GLchar attribName[attribBufSize];
+    GLsizei length;
+
+    // attributes
+    glGetProgramiv(program_, GL_ACTIVE_ATTRIBUTES, &count);
+    for (i = 0; i < count; i++) {
+        glGetActiveAttrib(program_, (GLuint) i, attribBufSize,
+                &length, &size, &type, attribName);
+        std::string sName(attribName);
+        // std::cout << "attrib: " << i << " = " << sName << std::endl;
+        attributeList_[sName] = i;
+    }
+
+    // uniforms
+    GLsizei uniformBufSize;
+    glGetProgramiv(program_, GL_ACTIVE_UNIFORM_MAX_LENGTH, &uniformBufSize);
+    GLchar uniformName[uniformBufSize];
+    glGetProgramiv(program_, GL_ACTIVE_UNIFORMS, &count);
+    for (i = 0; i < count; i++) {
+        glGetActiveUniform(program_, (GLuint) i, uniformBufSize,
+                &length, &size, &type, uniformName);
+        std::string sName(uniformName);
+        // std::cout << "uniform: " << i << " = " << sName << std::endl;
+        uniformList_[sName] = i;
+    }
+
+    // bindings (cant get? only indices?)
+    /*
+    glGetProgramiv(prgm, GL_ACTIVE_UNIFORM_BLOCKS, &count);
+    cout << "Active uniform blocks: " << count << endl;
+    for (i = 0; i < count; i++) {
+        GLint nameLen;
+        glGetActiveUniformBlockiv(prgm, i, GL_UNIFORM_BLOCK_NAME_LENGTH, &nameLen);
+        std::vector<GLchar> name(nameLen);
+        glGetActiveUniformBlockName(prgm, i, nameLen, NULL, &name[0]);
+        std::string sName;
+        sName.assign(name.begin(), name.end() - 1);
+
+        cout << "\t: Uniform Block: " << i << ", name: " << sName << endl;
+    }
+    */
 }
 
 void Shader::Enable() {

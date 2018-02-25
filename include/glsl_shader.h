@@ -11,10 +11,13 @@ class Shader {
     public:
         Shader();
         Shader(const std::string& name);
+        Shader(const std::string& name, const std::string& vname,
+               const std::string& fname, const std::string& cname);
         ~Shader();
         void LoadFromString(GLenum shaderType, const std::string& source);
         void LoadFromFile(GLenum shaderType, const std::string& filename);
         void CreateAndLinkProgram();
+        void AutoDetectVariables();
         void Enable();
         void Disable();
         void AddAttribute(const std::string& attribute);

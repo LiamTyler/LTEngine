@@ -20,53 +20,19 @@ int main() {
     Window* window = new Window("Starter Project", 800, 600);
 
     renderer = new Renderer;
-    renderer->AddShader("mesh", "shaders/regular_phong.vert",
+    renderer->AddShader("meshShader", "shaders/regular_phong.vert",
             "shaders/regular_phong.frag", "");
-    Shader* shader = renderer->GetShader("mesh");
-    GLuint prgm = shader->GetProgram();
-    GLint i;
-    GLint count;
-    GLint size;
-    GLenum type;
-    const GLsizei bufSize = 30;
-    GLchar name[bufSize];
-    GLsizei length;
-    glGetProgramiv(prgm, GL_ACTIVE_ATTRIBUTES, &count);
-    cout << "Active attributes: " << count << endl;
-    for (i = 0; i < count; i++) {
-        glGetActiveAttrib(prgm, (GLuint) i, bufSize, &length, &size, &type, name);
-        cout << "\tAttrib: " << i << ", name: " << name << endl;
-    }
-    glGetProgramiv(prgm, GL_ACTIVE_UNIFORMS, &count);
-    cout << "Active uniforms: " << count << endl;
-    for (i = 0; i < count; i++) {
-        glGetActiveUniform(prgm, (GLuint) i, bufSize, &length, &size, &type, name);
-        cout << "\tUniform: " << i << ", name: " << name << endl;
-    }
-    glGetProgramiv(prgm, GL_ACTIVE_UNIFORM_BLOCKS, &count);
-    cout << "Active uniform blocks: " << count << endl;
-    for (i = 0; i < count; i++) {
-        GLint nameLen;
-        glGetActiveUniformBlockiv(prgm, i, GL_UNIFORM_BLOCK_NAME_LENGTH, &nameLen);
-        std::vector<GLchar> name(nameLen);
-        glGetActiveUniformBlockName(prgm, i, nameLen, NULL, &name[0]);
-        std::string sName;
-        sName.assign(name.begin(), name.end() - 1);
 
-        cout << "\t: Uniform Block: " << i << ", name: " << sName << endl;
-    }
-
-    ResourceManager* rm = new ResourceManager;
+    ResourceManager* resourceManager = new ResourceManager;
     Material cubeMat = Material(
             glm::vec4(1.0, .4, .4, 1),
             glm::vec4(1.0, .4, .4, 1),
             glm::vec4(.6, .6,  .6, 1),
             50);
-    Material* mat1 = rm->AllocateResource<Material>(cubeMat);
-    Mesh* mesh = rm->LoadMesh("models/sphere.obj");
-    cout << "mesh tris: " << mesh->GetNumTriangles() << endl;
+    Material* mat1 = resourceManager->AllocateResource<Material>(cubeMat);
+    Mesh* mesh = resourceManager->LoadMesh("models/sphere.obj");
 
-    GameObject Bjorn = GameObject(Transform(), new MeshRenderer(mesh, mat1, "mesh"));
+    GameObject Bjorn = GameObject(Transform(), new MeshRenderer(mesh, mat1, "meshShader"));
 
     Camera camera = Camera(glm::vec3(0, 0, 5), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), 5, 0.005);
 
@@ -121,7 +87,9 @@ int main() {
     }
 
     // Clean up
-    SDL_Quit();
+    delete renderer;
+    delete resourceManager;
+    delete window;
 
     return 0;
 }

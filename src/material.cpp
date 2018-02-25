@@ -10,7 +10,6 @@ Material::Material() : Material(
 }
 
 Material::~Material() {
-    std::cout << "in material destructor" << std::endl;
 }
 
 Material::Material(glm::vec4 a, glm::vec4 d, glm::vec4 s, float spec) : Resource(-1) {

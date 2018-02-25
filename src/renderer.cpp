@@ -18,31 +18,7 @@ Shader* Renderer::GetShader(const std::string& id) {
 
 Shader* Renderer::AddShader(const std::string& id, const std::string& vShader,
                      const std::string& fShader, const std::string& cShader) {
-    Shader* shader = new Shader(id);
-    if (vShader != "")
-        shader->LoadFromFile(GL_VERTEX_SHADER, vShader);
-    if (fShader != "")
-        shader->LoadFromFile(GL_FRAGMENT_SHADER, fShader);
-    if (cShader != "")
-        shader->LoadFromFile(GL_COMPUTE_SHADER, cShader);
-    shader->CreateAndLinkProgram();
-
-    // just to test mesh vao
-    shader->Enable();
-    shader->AddAttribute("vertex");
-    shader->AddAttribute("normal");
-    shader->AddUniform("modelViewMatrix");
-    shader->AddUniform("normalMatrix");
-    shader->AddUniform("projectionMatrix");
-    shader->AddUniform("ka");
-    shader->AddUniform("kd");
-    shader->AddUniform("ks");
-    shader->AddUniform("Ia");
-    shader->AddUniform("Id");
-    shader->AddUniform("Is");
-    shader->AddUniform("specular");
-    shader->AddUniform("lightInEyeSpace");
-    // end
+    Shader* shader = new Shader(id, vShader, fShader, cShader);
 
     shaders_.push_back(shader);
     shader_mapping_[id] = shaders_.size() - 1;
