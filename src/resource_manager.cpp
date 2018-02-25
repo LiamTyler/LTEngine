@@ -38,31 +38,31 @@ Mesh* ResourceManager::LoadMesh(const std::string& fname) {
         return nullptr;
     }
     objl::Mesh m = Loader.LoadedMeshes[0];
-    unsigned int numVerts = m.Vertices.size();
-    glm::vec3* vertices = new glm::vec3[numVerts];
-    glm::vec3* normals  = new glm::vec3[numVerts];
-    for (int i = 0; i < numVerts; i++) {
+    Mesh* newMesh = AllocateResource<Mesh>();
+    newMesh->numVertices = m.Vertices.size();
+    newMesh->vertices = new glm::vec3[newMesh->numVertices];
+    newMesh->normals  = new glm::vec3[newMesh->numVertices];
+    for (int i = 0; i < newMesh->numVertices; i++) {
         float x,y,z;
         x = m.Vertices[i].Position.X;
         y = m.Vertices[i].Position.Y;
         z = m.Vertices[i].Position.Z;
-        vertices[i] = glm::vec3(x, y, z);
+        newMesh->vertices[i] = glm::vec3(x, y, z);
         x = m.Vertices[i].Normal.X;
         y = m.Vertices[i].Normal.Y;
         z = m.Vertices[i].Normal.Z;
-        normals[i] = glm::vec3(x, y, z);
+        newMesh->normals[i] = glm::vec3(x, y, z);
     }
-    unsigned int numTris = m.Indices.size() / 3;
-    glm::ivec3* indices = new glm::ivec3[numTris];
+    newMesh->numTriangles = m.Indices.size() / 3;
+    newMesh->indices = new glm::ivec3[newMesh->numTriangles];
     int tri = 0;
     for (int i = 0; i < m.Indices.size();) {
         unsigned int x = m.Indices[i++];
         unsigned int y = m.Indices[i++];
         unsigned int z = m.Indices[i++];
-        indices[tri++] = glm::ivec3(x, y, z);
+        newMesh->indices[tri++] = glm::ivec3(x, y, z);
     }
-    Mesh mesh(numVerts, numTris, vertices, normals, indices);
-    return AllocateResource<Mesh>(mesh);
+    return newMesh;
 }
 
 void ResourceManager::Display() {

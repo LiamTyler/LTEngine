@@ -17,7 +17,7 @@ using namespace std;
 Renderer* renderer;
 
 int main() {
-    Window* window = new Window("Starter Project", 800, 600);
+    Window window("Starter Project", 800, 600);
 
     renderer = new Renderer;
     renderer->AddShader("meshShader", "shaders/regular_phong.vert",
@@ -34,13 +34,13 @@ int main() {
 
     GameObject Bjorn = GameObject(Transform(), new MeshRenderer(mesh, mat1, "meshShader"));
 
-    Camera camera = Camera(glm::vec3(0, 0, 5), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), 5, 0.005);
 
+    Camera camera = Camera(glm::vec3(0, 0, 5), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), 5, 0.005);
     Input input;
 
     bool quit = false;
     SDL_Event event;
-    window->SetRelativeMouse(true);
+    window.SetRelativeMouse(true);
     FPSCounter fpsCounter;
     while (!quit) {
         quit = input.HandleInput();
@@ -83,13 +83,12 @@ int main() {
 
         fpsCounter.EndFrame();
 
-        window->SwapWindow();
+        window.SwapWindow();
     }
 
     // Clean up
     delete renderer;
     delete resourceManager;
-    delete window;
 
     return 0;
 }

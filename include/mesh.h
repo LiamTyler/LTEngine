@@ -10,20 +10,23 @@ class Mesh : public Resource {
         Mesh(unsigned int numV, unsigned int numT, glm::vec3* verts,
                 glm::vec3* norms, glm::ivec3* indices);
         ~Mesh();
+
+        Mesh& operator=(const Mesh& m);
+        Mesh(const Mesh& m);
+
         friend std::ostream& operator<<(std::ostream& out, const Mesh& m);
 
-        unsigned int GetNumVertices() const { return numVertices_; }
-        unsigned int GetNumTriangles() const { return numTriangles_; }
-        glm::vec3* GetVertices() const { return vertices_; }
-        glm::vec3* GetNormals() const { return normals_; }
-        glm::ivec3* GetIndices() const { return indices_; }
+        unsigned int GetNumVertices() const { return numVertices; }
+        unsigned int GetNumTriangles() const { return numTriangles; }
+        glm::vec3* GetVertices() const { return vertices; }
+        glm::vec3* GetNormals() const { return normals; }
+        glm::ivec3* GetIndices() const { return indices; }
 
-    private:
-        unsigned int numVertices_;
-        unsigned int numTriangles_;
-        glm::vec3* vertices_;
-        glm::vec3* normals_;
-        glm::ivec3* indices_;
+        unsigned int numVertices;
+        unsigned int numTriangles;
+        glm::vec3* vertices;
+        glm::vec3* normals;
+        glm::ivec3* indices;
 };
 
 #endif  // INCLUDE_MESH_H_
