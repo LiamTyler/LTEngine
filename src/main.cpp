@@ -39,10 +39,9 @@ int main() {
     Input input;
 
     bool quit = false;
-    SDL_Event event;
     window.SetRelativeMouse(true);
-    FPSCounter fpsCounter;
     while (!quit) {
+        window.StartFrame();
         quit = input.HandleInput();
         if (input.KeyPressed(K_W)) {
             camera.VelZ(1.0f);
@@ -74,16 +73,12 @@ int main() {
             camera.UpdateAxis();
         }
 
-        float t = SDL_GetTicks() / 1000.0f;
-        fpsCounter.StartFrame(t);
-        float dt = fpsCounter.GetDT();
+        float dt = window.GetDT();
         camera.Update(dt);
 
         renderer->RenderScene(camera);
 
-        fpsCounter.EndFrame();
-
-        window.SwapWindow();
+        window.EndFrame();
     }
 
     // Clean up

@@ -8,6 +8,7 @@ Window::Window(const std::string& title, int w, int h) {
     title_ = title;
     width_ = w;
     height_ = h;
+    fpsCounter_ = FPSCounter();
     Init();
 }
 
@@ -72,4 +73,29 @@ void Window::SetRelativeMouse(bool b) {
         SDL_SetRelativeMouseMode(SDL_TRUE);
     else
         SDL_SetRelativeMouseMode(SDL_FALSE);
+}
+
+float Window::GetTotalRuntime() {
+    return SDL_GetTicks() / 1000.0f;
+}
+
+float Window::GetDT() {
+    return fpsCounter_.GetDT();
+}
+
+void Window::StartFrame() {
+    fpsCounter_.StartFrame(GetTotalRuntime());
+}
+
+void Window::EndFrame() {
+    fpsCounter_.EndFrame();
+    SwapWindow();
+}
+
+void Window::SetFPSCallback(std::function<void(void*)> f, void* data) {
+    fpsCounter_.SetCallback(f, data);
+}
+
+void Window::ClearFPSCallback() {
+    fpsCounter_.SetCallback(nullptr, nullptr);
 }
