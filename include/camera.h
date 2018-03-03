@@ -2,55 +2,42 @@
 #define INCLUDE_CAMERA_H_
 
 #include "include/utils.h"
+#include "include/game_object.h"
 
-class Camera {
+class Camera : public GameObject {
     public:
         Camera();
-        Camera(glm::vec3 pos, glm::vec3 dir, glm::vec3 up);
-        Camera(glm::vec3 pos, glm::vec3 dir, glm::vec3 up, float sLinear, float sAngular);
-        void Setup();
+        Camera(const glm::vec3& pos);
+        Camera(Transform t);
+        Camera(Transform t, float fov, float a, float np, float fp);
 
-        void SetProjection(float fov, float aspect, float near_p, float far_p);
-        void Update(float dt);
-        void UpdateAxis();
+        glm::mat4 GetV();
+        glm::mat4 GetP();
+        float GetFOV();
+        float GetAspectRatio();
+        float GetNearPlane();
+        float GetFarPlane();
+        void SetFOV(float f);
+        void SetAspectRatio(float a);
+        void SetNearPlane(float p);
+        void SetFarPlane(float p);
+        void UpdateOrientationVectors();
         void UpdateViewMatrix();
-
-        void RotateY(float y);
-        void RotateX(float x);
-
-        // Getters
-        glm::mat4 View() { return view_; }
-        glm::mat4 Proj() { return projection_; }
-        glm::mat4 VP() { return projection_ * view_; }
-        glm::vec3 Vel() { return vel_; }
-        glm::vec3 Pos() { return pos_; }
-        glm::vec3 Dir() { return currDir_; }
-        glm::vec3 Up() { return currUp_; }
-        glm::vec3 Right() { return currRight_; }
-
-        // Setters
-        void VelX(float x) { vel_.x = x; }
-        void VelY(float y) { vel_.y = y; }
-        void VelZ(float z) { vel_.z = z; }
-        void Vel(glm::vec3 vel) { vel_ = vel; }
-        void Pos(glm::vec3 p) { pos_ = p; }
+        glm::vec3 GetForwardDir();
+        glm::vec3 GetUpDir();
+        glm::vec3 GetRightDir();
 
     protected:
-        glm::vec3 pos_;
-        glm::vec3 initialDir_;
-        glm::vec3 initialUp_;
-        glm::vec3 initialRight_;
-        glm::vec3 currDir_;
-        glm::vec3 currUp_;
-        glm::vec3 currRight_;
-        glm::vec3 vel_;
-
-        float speedAngular_;
-        float speedLinear_;
-        glm::vec2 rotation_;
-
-        glm::mat4 view_;
-        glm::mat4 projection_;
+        void UpdateProjectionMatrix();
+        float FOV;
+        float aspectRatio;
+        float nearPlane;
+        float farPlane;
+        glm::mat4 viewMatrix;
+        glm::mat4 projectionMatrix;
+        glm::vec3 currDir;
+        glm::vec3 currUp;
+        glm::vec3 currRight;
 };
 
 #endif  // INCLUDE_CAMERA_H_

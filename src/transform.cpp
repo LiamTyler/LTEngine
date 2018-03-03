@@ -7,7 +7,14 @@ Transform::Transform() : Transform(
 {
 }
 
-Transform::Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 sc) {
+Transform::Transform(const glm::vec3& pos) : Transform(
+        pos,
+        glm::vec3(0, 0, 0),
+        glm::vec3(1, 1, 1))
+{
+}
+
+Transform::Transform(const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& sc) {
     position = pos;
     rotation = rot;
     scale = sc;

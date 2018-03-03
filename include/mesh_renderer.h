@@ -11,7 +11,7 @@ class MeshRenderer : public RenderComponent {
         ~MeshRenderer();
 
         void Start();
-        void Update();
+        void Update(float dt);
         void Stop();
         void Render(Shader& shader, glm::mat4& V);
 

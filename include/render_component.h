@@ -11,7 +11,7 @@ class RenderComponent : public Component {
         RenderComponent(Material* mat, const std::string& shaderID);
         virtual ~RenderComponent() {}
         virtual void Start() = 0;
-        virtual void Update() = 0;
+        virtual void Update(float dt) = 0;
         virtual void Stop() = 0;
         virtual void Render(Shader& shader, glm::mat4& V) = 0;
 

@@ -1,24 +1,23 @@
 #include "include/game_object.h"
 
 GameObject::GameObject() : GameObject(
-        Transform(),
-        nullptr)
+        Transform())
 {
 }
 
-GameObject::GameObject(Transform t, RenderComponent* r) {
+GameObject::GameObject(Transform t) {
     transform = t;
-    renderComponent = r;
-    renderComponent->gameObject = this;
-    renderComponent->Start();
+    component_list_.clear();
 }
 
 GameObject::~GameObject() {
-    if (renderComponent)
-        delete renderComponent;
+    for (auto& c : component_list_) {
+        c.second->Stop();
+        delete c.second;
+    }
 }
 
-void GameObject::Update() {
-    if (renderComponent)
-        renderComponent->Update();
+void GameObject::Update(float dt) {
+    for (auto& c : component_list_)
+        c.second->Update(dt);
 }

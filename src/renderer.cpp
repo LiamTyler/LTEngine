@@ -59,8 +59,8 @@ GLuint* Renderer::CreateVbos(int num) {
 void Renderer::RenderScene(Camera& camera) {
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glm::mat4 V = camera.View();
-    glm::mat4 P = camera.Proj();
+    glm::mat4 V = camera.GetV();
+    glm::mat4 P = camera.GetP();
 
     // hard code the light right now
     glm::vec4 lightDir = glm::normalize(glm::vec4(-1, -.5, -.8, 0));

@@ -14,7 +14,7 @@ class ResourceManager {
         template<class T>
         T* AllocateResource();
         template<class T>
-        T* AllocateResource(T& resource);
+        T* AllocateResource(const T& resource);
         template<class T>
         T* GetResource(RID id);
 
@@ -55,7 +55,7 @@ T* ResourceManager::AllocateResource() {
 }
 
 template<class T>
-T* ResourceManager::AllocateResource(T& resource) {
+T* ResourceManager::AllocateResource(const T& resource) {
     T* newResource = new T;
     RID newID = AllocateRID();
     ResourceCount rc(1, newResource);

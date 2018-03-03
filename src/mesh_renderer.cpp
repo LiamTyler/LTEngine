@@ -42,7 +42,7 @@ void MeshRenderer::Start() {
     }
 }
 
-void MeshRenderer::Update() {
+void MeshRenderer::Update(float dt) {
 }
 
 void MeshRenderer::Stop() {

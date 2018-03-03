@@ -11,71 +11,47 @@
 #include "include/fps_counter.h"
 #include "include/window.h"
 #include "include/input.h"
+#include "include/camera_controller.h"
 
 using namespace std;
 
 Renderer* renderer;
+Input* input;
 
 int main() {
     Window window("Starter Project", 800, 600);
-
+    input = new Input;
     renderer = new Renderer;
+    ResourceManager* resourceManager = new ResourceManager;
+
     renderer->AddShader("meshShader", "shaders/regular_phong.vert",
             "shaders/regular_phong.frag", "");
 
-    ResourceManager* resourceManager = new ResourceManager;
-    Material cubeMat = Material(
+    Material* cubeMat = resourceManager->AllocateResource<Material>(Material(
             glm::vec4(1.0, .4, .4, 1),
             glm::vec4(1.0, .4, .4, 1),
             glm::vec4(.6, .6,  .6, 1),
-            50);
-    Material* mat1 = resourceManager->AllocateResource<Material>(cubeMat);
+            50));
     Mesh* mesh = resourceManager->LoadMesh("models/sphere.obj");
 
-    GameObject Bjorn = GameObject(Transform(), new MeshRenderer(mesh, mat1, "meshShader"));
+    GameObject Bjorn = GameObject(Transform());
+    Bjorn.AddComponent<MeshRenderer>(new MeshRenderer(mesh, cubeMat, "meshShader"));
 
-
-    Camera camera = Camera(glm::vec3(0, 0, 5), glm::vec3(0, 0, -1), glm::vec3(0, 1, 0), 5, 0.005);
-    Input input;
+    Camera camera = Camera();
+    camera.AddComponent<CameraController>(new CameraController(4, .005));
 
     bool quit = false;
     window.SetRelativeMouse(true);
     while (!quit) {
         window.StartFrame();
-        quit = input.HandleInput();
-        if (input.KeyPressed(K_W)) {
-            camera.VelZ(1.0f);
-        }
-        if (input.KeyPressed(K_S)) {
-            camera.VelZ(-1.0f);
-        }
-        if (input.KeyPressed(K_A)) {
-            camera.VelX(-1.0f);
-        }
-        if (input.KeyPressed(K_D)) {
-            camera.VelX(1.0f);
-        }
-        if (input.KeyPressed(K_ESC)) {
+        quit = input->HandleInput();
+        if (input->KeyPressed(K_ESC)) {
             quit = true;
-        }
-        if (input.KeyReleased(K_W))
-            camera.VelZ(0);
-        if (input.KeyReleased(K_S))
-            camera.VelZ(0);
-        if (input.KeyReleased(K_A))
-            camera.VelX(0);
-        if (input.KeyReleased(K_D))
-            camera.VelX(0);
-
-        if (input.MouseMotionEvent()) {
-            camera.RotateX(-input.mouse.dy);
-            camera.RotateY(-input.mouse.dx);
-            camera.UpdateAxis();
         }
 
         float dt = window.GetDT();
         camera.Update(dt);
-
+        Bjorn.Update(dt);
         renderer->RenderScene(camera);
 
         window.EndFrame();
