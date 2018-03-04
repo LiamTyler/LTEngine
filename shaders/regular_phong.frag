@@ -7,6 +7,8 @@ uniform vec4 ka;
 uniform vec4 kd;
 uniform vec4 ks;
 uniform float specular;
+uniform bool textured;
+uniform sampler2D diffuseTex;
 
 uniform vec4 Ia;
 uniform vec4 Id;
@@ -24,6 +26,9 @@ void main() {
 
     vec3 outColor = vec3(0, 0, 0);
     outColor += Ia.xyz * ka.xyz;
+    // vec3 diffuseMult = kd.xyz;
+    // if (textured) {
+    //     diffuseMult *= texture(
     outColor += Id.xyz * kd.xyz * max(0.0, dot(l, n));
     outColor += Is.xyz * ks.xyz * pow(max(dot(h, n), 0.0), specular);
 

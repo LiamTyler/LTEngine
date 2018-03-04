@@ -1,31 +1,10 @@
-#include <iostream>
-#include <unordered_map>
-#include "include/rid.h"
-#include "include/material.h"
-#include "include/mesh.h"
-#include "include/resource_manager.h"
-#include "include/game_object.h"
-#include "include/mesh_renderer.h"
-#include "include/renderer.h"
-#include "include/camera.h"
-#include "include/fps_counter.h"
-#include "include/window.h"
-#include "include/input.h"
-#include "include/camera_controller.h"
+#include "include/Progression.h"
 
 using namespace std;
 
-Renderer* renderer;
-Input* input;
-
 int main() {
+    InitEngine();
     Window window("Starter Project", 800, 600);
-    input = new Input;
-    renderer = new Renderer;
-    ResourceManager* resourceManager = new ResourceManager;
-
-    renderer->AddShader("meshShader", "shaders/regular_phong.vert",
-            "shaders/regular_phong.frag", "");
 
     Material* cubeMat = resourceManager->AllocateResource<Material>(Material(
             glm::vec4(1.0, .4, .4, 1),
@@ -34,7 +13,7 @@ int main() {
             50));
     Mesh* mesh = resourceManager->LoadMesh("models/sphere.obj");
 
-    GameObject Bjorn = GameObject(Transform());
+    GameObject Bjorn = GameObject(Transform(glm::vec3(0, 0, -5)));
     Bjorn.AddComponent<MeshRenderer>(new MeshRenderer(mesh, cubeMat, "meshShader"));
 
     Camera camera = Camera();
@@ -45,9 +24,8 @@ int main() {
     while (!quit) {
         window.StartFrame();
         quit = input->HandleInput();
-        if (input->KeyPressed(K_ESC)) {
+        if (input->KeyPressed(K_ESC))
             quit = true;
-        }
 
         float dt = window.GetDT();
         camera.Update(dt);
@@ -57,9 +35,6 @@ int main() {
         window.EndFrame();
     }
 
-    // Clean up
-    delete renderer;
-    delete resourceManager;
-
+    QuitEngine();
     return 0;
 }

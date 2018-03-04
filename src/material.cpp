@@ -5,18 +5,21 @@ Material::Material() : Material(
         glm::vec4(0, 0, 0, 1),
         glm::vec4(0, 0, 0, 1),
         glm::vec4(0, 0, 0, 1),
-        0)
+        0,
+        nullptr)
 {
 }
 
 Material::~Material() {
 }
 
-Material::Material(glm::vec4 a, glm::vec4 d, glm::vec4 s, float spec) : Resource(-1) {
+Material::Material(glm::vec4 a, glm::vec4 d, glm::vec4 s,
+        float spec, Texture* tex) : Resource(-1) {
     ka = a;
     kd = d;
     ks = s;
     specular = spec;
+    diffuseTex = tex;
 }
 
 std::ostream& operator<<(std::ostream& out, const Material& m) {

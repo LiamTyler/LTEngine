@@ -54,6 +54,12 @@ void MeshRenderer::Render(Shader& shader, glm::mat4& V) {
     glUniform4fv(shader["kd"], 1, value_ptr(material_->kd));
     glUniform4fv(shader["ks"], 1, value_ptr(material_->ks));
     glUniform1f(shader["specular"], material_->specular);
+    if (material_->diffuseTex) {
+        glUniform1i(shader["textured"], true);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, material_->diffuseTex->GetHandle());
+        glUniform1i(shader["diffuseTex"], 0);
+    }
 
     // send model and normal matrices
     glm::mat4 model = gameObject->transform.GetModelMatrix();

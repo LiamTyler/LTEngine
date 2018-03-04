@@ -15,19 +15,9 @@ Window::Window(const std::string& title, int w, int h) {
 Window::~Window() {
     SDL_GL_DeleteContext(glContext_);
     SDL_DestroyWindow(sdlWindow_);
-    SDL_Quit();
 }
 
 void Window::Init() {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        std::cerr << "Failed to init SDL" << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-
     sdlWindow_ = SDL_CreateWindow(
             title_.c_str(),
             SDL_WINDOWPOS_UNDEFINED,
@@ -51,17 +41,18 @@ void Window::Init() {
         std::cerr << "Failed to init GLEW" << std::endl;
         exit(EXIT_FAILURE);
     }
+    // print info
+    std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
+    std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
+    std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
+
     /*
     if (SDL_GL_SetSwapInterval(1) < 0)
         std::cerr << "Failed to set vsync" << std::endl;
     */
 
     glEnable(GL_DEPTH_TEST);
-
-    // print info
-    std::cout << "Vendor: " << glGetString(GL_VENDOR) << std::endl;
-    std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl;
-    std::cout << "Version: " << glGetString(GL_VERSION) << std::endl;
+    InitEngineAfterWindow();
 }
 
 void Window::SwapWindow() {

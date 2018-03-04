@@ -20,4 +20,8 @@ inline std::ostream& operator <<(std::ostream& out, const glm::vec4& v) {
     return out;
 }
 
+void InitEngine();
+void InitEngineAfterWindow();
+void QuitEngine();
+
 #endif  // INCLUDE_UTILS_H_

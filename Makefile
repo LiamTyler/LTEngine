@@ -14,17 +14,34 @@ make-depend-cxx=$(CXX) $(CXXFLAGS) -MM -MF $3 -MP -MT $2 $1
 SOURCES = $(SRCDIR)
 SRC_CXX = $(call rwildcard,$(SOURCES),*.cpp)
 OBJECTS_CXX = $(notdir $(patsubst %.cpp,%.o,$(SRC_CXX)))
-TARGET = $(BINDIR)/proj
+LIBNAME = libProgression.a
+LIBPATH = $(BUILDDIR)/$(LIBNAME)
+LIBLINK = -L$(BUILDDIR) -lProgression
 
-.PHONY: all clean run
+EXAMPLEDIR = $(MAINDIR)/examples
+EXAMPLE_SRC = $(notdir $(call rwildcard,$(EXAMPLEDIR),*.cpp))
+EXAMPLE_EXES = $(basename $(EXAMPLE_SRC))
 
-all: $(TARGET)
+.PHONY: all clean lib examples info
+
+info:
+	@echo $(EXAMPLE_SRC)
+	@echo $(EXAMPLE_EXES)
+
+all: $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)) | $(BINDIR)
 
 clean:
 	@rm -rf $(BUILDDIR)
+	@rm -f $(EXAMPLEDIR)/*.o
 
-run: $(TARGET)
-	$(TARGET)
+lib: $(LIBPATH)
+
+examples: $(addprefix $(EXAMPLEDIR)/, $(EXAMPLE_EXES)) |$(LIBPATH)
+	
+
+$(LIBPATH): $(TARGET)
+	@rm -f $(LIBPATH)
+	@ar -csq $(LIBPATH) $(OBJDIR)/*.o
 
 ifneq "$MAKECMDGOALS" "clean"
 -include $(addprefix $(OBJDIR)/,$(OBJECTS_CXX:.o=.d))
@@ -32,12 +49,12 @@ endif
 
 $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)): | $(OBJDIR)
 
-$(TARGET): $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)) | $(BINDIR)
-	$(CXX) $(CXXFLAGS) $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)) -o $@ $(CXXLIBS)
-
 $(BINDIR) $(OBJDIR):
 	@mkdir -p $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@$(call make-depend-cxx,$<,$@,$(subst .o,.d,$@))
 	$(CXX) $(CXXFLAGS) $(CXXLIBS) -c -o $@ $<
+
+$(EXAMPLEDIR)/%: $(EXAMPLEDIR)/%.cpp
+	$(CXX) $< $(LIBLINK) $(CXXFLAGS) $(CXXLIBS) -o $@

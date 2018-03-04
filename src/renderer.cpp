@@ -1,6 +1,9 @@
 #include "include/renderer.h"
 
 Renderer::Renderer() {
+    // load default mesh shader
+    AddShader("meshShader", "shaders/regular_phong.vert",
+            "shaders/regular_phong.frag", "");
 }
 
 Renderer::~Renderer() {

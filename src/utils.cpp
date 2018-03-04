@@ -1,22 +1,39 @@
 #include "include/utils.h"
-// #include "include/image.h"
+#include "include/renderer.h"
+#include "include/input.h"
+#include "include/resource_manager.h"
 
-/*
-GLuint LoadTexture(string path) {
-    Image image;
-    if (!image.LoadImage(path)) {
-        std::cerr << "Failed to load tex: " << path << std::endl;
-        return -1;
+Renderer* renderer;
+Input* input;
+ResourceManager* resourceManager;
+
+void InitEngine() {
+    // Init SDL2
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
+        std::cerr << "Failed to init SDL" << std::endl;
+        exit(EXIT_FAILURE);
     }
 
-    GLuint tex;
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.Width(), image.Height(), 0, GL_RGBA,
-            GL_FLOAT, image.Data());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    return tex;
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    input = nullptr;
+    renderer = nullptr;
+    resourceManager = nullptr;
 }
-*/
+
+void InitEngineAfterWindow() {
+    if (input == nullptr) {
+        input = new Input;
+        renderer = new Renderer;
+        resourceManager = new ResourceManager;
+    }
+}
+
+
+void QuitEngine() {
+    delete input;
+    delete renderer;
+    delete resourceManager;
+    SDL_Quit();
+}
