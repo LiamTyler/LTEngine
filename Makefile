@@ -24,10 +24,6 @@ EXAMPLE_EXES = $(basename $(EXAMPLE_SRC))
 
 .PHONY: all clean lib examples info
 
-info:
-	@echo $(EXAMPLE_SRC)
-	@echo $(EXAMPLE_EXES)
-
 all: $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)) | $(BINDIR)
 
 clean:
@@ -36,10 +32,10 @@ clean:
 
 lib: $(LIBPATH)
 
-examples: $(addprefix $(EXAMPLEDIR)/, $(EXAMPLE_EXES)) |$(LIBPATH)
+examples: $(addprefix $(EXAMPLEDIR)/, $(EXAMPLE_EXES)) | $(LIBPATH)
 	
 
-$(LIBPATH): $(TARGET)
+$(LIBPATH): all
 	@rm -f $(LIBPATH)
 	@ar -csq $(LIBPATH) $(OBJDIR)/*.o
 
