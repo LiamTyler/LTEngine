@@ -4,7 +4,7 @@ using namespace std;
 
 int main() {
     InitEngine();
-    Window window("Starter Project", 800, 600);
+    Window window("Example 1", 800, 600);
 
     Material* redMat = resourceManager->AllocateResource<Material>(Material(
             glm::vec4(1.0, .4, .4, 1),

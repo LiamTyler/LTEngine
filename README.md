@@ -17,20 +17,24 @@
 * [OpenGL installed](https://en.wikibooks.org/wiki/OpenGL_Programming/Installation/Linux)
 * [SDL2 installed](https://en.wikibooks.org/wiki/OpenGL_Programming/Installation/Linux)
 
-Clone or download this repository
-Then use the makefile to build it.
-Building library and examples:
-`make all`
-Building just the library:
-`make lib`
+Clone or download this repository    
+Then use the makefile to build it.    
+Building library and examples:     
+```sh
+make all
+```
+Building just the library:     
+```sh
+make lib
+```
 
 Running the examples: example1:
 ```sh
 cd [Progression root dir]
 ./build/examples/example1
 ```
-Result:
-![Example1 output](https://lh3.googleusercontent.com/RiFDO7fFRM9cf5tXO68-VQzcFyD1lO29kmAL2XIL2i16ZFOApHpbxvuUifFag9a79_lCQA_bsk-QnAw6yo8c3fMYsSDpzuCjZKPd9IMaHJHj1RMFyRanxwqE48D8YHNTawnwxxxh=w2400)
+Result:   
+![Example1 output](https://lh3.googleusercontent.com/ysYM82HDNjdLZY2HWuaRijtDOehv0JnY2_n8pLeAj9yWjCneWxzWz_RA5DuAcVDxVZUuPhbdrg4zeMiNWog2_S_4h4-rQzIALmNHZTjKSHnrmTUd0DtPFa7OrORxOvvKNAZSg0Cr=w2400)
 
 ### Using Progression Engine in another project
 Since Progression compiles a static library, you can link it with whatever project you want. See the [Makefile template](makefile.template) to see the makefile I commonly use to compile my projects that also use Progression.
@@ -45,7 +49,7 @@ Since Progression compiles a static library, you can link it with whatever proje
 * STB\_image for image loading and saving
 
 ## Authors
-* [Liam Tyler](www.liamtyler.com)
+* [Liam Tyler](http://www.liamtyler.com)
 
 ## License
 MIT License. See [LICENSE](LICENSE)
