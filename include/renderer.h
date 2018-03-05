@@ -33,6 +33,7 @@ class Renderer {
         Shader* AddShader(const std::string& id, const std::string& vShader,
                 const std::string& fShader, const std::string& cShader);
         bool VaoExists(RID r);
+        void Register(RID r, RenderComponent* rc);
         GLuint CreateAndRegisterVao(const std::string& shaderID, RID r, RenderComponent* rc);
         GLuint* CreateVbos(int num);
         void RenderScene(Camera& camera);

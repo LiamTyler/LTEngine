@@ -36,6 +36,13 @@ bool Renderer::VaoExists(RID r) {
     return vao_mapping_.find(r) != vao_mapping_.end();
 }
 
+void Renderer::Register(RID r, RenderComponent* rc) {
+    struct Map& map = vao_mapping_[r];
+    ShaderGroup& sg = shaderGroups_[map.shaderGroup];
+    VaoGroup& vg = sg.vaoGroups_[map.vaoGroup];
+    vg.objects_.push_back(rc);
+}
+
 GLuint Renderer::CreateAndRegisterVao(const std::string& shaderID, RID r, RenderComponent* rc) {
     GLuint vao;
     glGenVertexArrays(1, &vao);

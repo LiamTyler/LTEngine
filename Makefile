@@ -24,19 +24,19 @@ EXAMPLE_EXES = $(basename $(EXAMPLE_SRC))
 
 .PHONY: all clean lib examples info
 
-all: $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)) | $(BINDIR)
+all: $(LIBPATH) examples
 
 clean:
-	@rm -rf $(BUILDDIR)
-	@rm -f $(EXAMPLEDIR)/*.o
+	rm -rf $(BUILDDIR)
+	rm -f $(EXAMPLEDIR)/*.o
 
 lib: $(LIBPATH)
 
-examples: $(addprefix $(EXAMPLEDIR)/, $(EXAMPLE_EXES)) $(LIBPATH)
+examples: $(addprefix $(EXAMPLEDIR)/, $(EXAMPLE_EXES))
 
-$(LIBPATH): all
-	@rm -f $(LIBPATH)
-	@ar -csq $(LIBPATH) $(OBJDIR)/*.o
+$(LIBPATH): $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)) | $(BINDIR)
+	rm -f $(LIBPATH)
+	ar -csq $(LIBPATH) $(OBJDIR)/*.o
 
 ifneq "$MAKECMDGOALS" "clean"
 -include $(addprefix $(OBJDIR)/,$(OBJECTS_CXX:.o=.d))
@@ -45,11 +45,11 @@ endif
 $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)): | $(OBJDIR)
 
 $(BINDIR) $(OBJDIR):
-	@mkdir -p $@
+	mkdir -p $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@$(call make-depend-cxx,$<,$@,$(subst .o,.d,$@))
 	$(CXX) $(CXXFLAGS) $(CXXLIBS) -c -o $@ $<
 
-$(EXAMPLEDIR)/%: $(EXAMPLEDIR)/%.cpp
+$(EXAMPLEDIR)/%: $(EXAMPLEDIR)/%.cpp $(LIBPATH)
 	$(CXX) $< $(LIBLINK) $(CXXFLAGS) $(CXXLIBS) -o $@

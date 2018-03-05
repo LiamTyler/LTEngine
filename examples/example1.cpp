@@ -6,15 +6,23 @@ int main() {
     InitEngine();
     Window window("Starter Project", 800, 600);
 
-    Material* cubeMat = resourceManager->AllocateResource<Material>(Material(
+    Material* redMat = resourceManager->AllocateResource<Material>(Material(
             glm::vec4(1.0, .4, .4, 1),
             glm::vec4(1.0, .4, .4, 1),
             glm::vec4(.6, .6,  .6, 1),
             50));
-    Mesh* mesh = resourceManager->LoadMesh("models/cylinder.obj");
+    Material* blueMat = resourceManager->AllocateResource<Material>(Material(
+            glm::vec4(.4, .4, 1.0, 1),
+            glm::vec4(.4, .4, 1.0, 1),
+            glm::vec4(.6, .6,  .6, 1),
+            50));
+    Mesh* cubeMesh = resourceManager->LoadMesh("models/cube.obj");
+    Mesh* sphereMesh = resourceManager->LoadMesh("models/sphere.obj");
 
-    GameObject Bjorn = GameObject(Transform(glm::vec3(0, 0, -5)));
-    Bjorn.AddComponent<MeshRenderer>(new MeshRenderer(mesh, cubeMat, "meshShader"));
+    GameObject cube = GameObject(Transform(glm::vec3(2, 0, -5)));
+    cube.AddComponent<MeshRenderer>(new MeshRenderer(cubeMesh, redMat, "meshShader"));
+    GameObject sphere = GameObject(Transform(glm::vec3(-2, 0, -5)));
+    sphere.AddComponent<MeshRenderer>(new MeshRenderer(sphereMesh, blueMat, "meshShader"));
 
     Camera camera = Camera();
     camera.AddComponent<CameraController>(new CameraController(4, .005));
@@ -29,7 +37,8 @@ int main() {
 
         float dt = window.GetDT();
         camera.Update(dt);
-        Bjorn.Update(dt);
+        cube.Update(dt);
+        sphere.Update(dt);
         renderer->RenderScene(camera);
 
         window.EndFrame();

@@ -1,5 +1,6 @@
 # Task List
 - [ ] Add texturing
+- [ ] Add ability to get resources by names
 - [ ] Add varying light
 - [ ] Add multiple light option
 - [ ] Add point light

@@ -16,6 +16,7 @@ MeshRenderer::~MeshRenderer() {}
 void MeshRenderer::Start() {
     Shader& shader = *renderer->GetShader(shaderID_);
     RID id = mesh_->rid;
+    std::cout << "in mesh rc start" << std::endl;
     if (!renderer->VaoExists(id)) {
         GLuint vao = renderer->CreateAndRegisterVao(shaderID_, id, this);
         GLuint* vbos = renderer->CreateVbos(3);
@@ -39,6 +40,8 @@ void MeshRenderer::Start() {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbos[2]);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh_->GetNumTriangles() * sizeof(glm::ivec3),
                 mesh_->GetIndices(), GL_STATIC_DRAW);
+    } else {
+        renderer->Register(id, this);
     }
 }
 
