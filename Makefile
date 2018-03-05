@@ -32,8 +32,7 @@ clean:
 
 lib: $(LIBPATH)
 
-examples: $(addprefix $(EXAMPLEDIR)/, $(EXAMPLE_EXES)) | $(LIBPATH)
-	
+examples: $(addprefix $(EXAMPLEDIR)/, $(EXAMPLE_EXES)) $(LIBPATH)
 
 $(LIBPATH): all
 	@rm -f $(LIBPATH)

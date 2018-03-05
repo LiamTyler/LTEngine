@@ -104,7 +104,8 @@ void Shader::AutoDetectVariables() {
                 &length, &size, &type, attribName);
         std::string sName(attribName);
         // std::cout << "attrib: " << i << " = " << sName << std::endl;
-        attributeList_[sName] = i;
+        // attributeList_[sName] = i;
+        AddAttribute(sName);
     }
 
     // uniforms
@@ -117,7 +118,8 @@ void Shader::AutoDetectVariables() {
                 &length, &size, &type, uniformName);
         std::string sName(uniformName);
         // std::cout << "uniform: " << i << " = " << sName << std::endl;
-        uniformList_[sName] = i;
+        // uniformList_[sName] = i;
+        AddUniform(sName);
     }
 
     // bindings (cant get? only indices?)

@@ -11,7 +11,7 @@ int main() {
             glm::vec4(1.0, .4, .4, 1),
             glm::vec4(.6, .6,  .6, 1),
             50));
-    Mesh* mesh = resourceManager->LoadMesh("models/sphere.obj");
+    Mesh* mesh = resourceManager->LoadMesh("models/cylinder.obj");
 
     GameObject Bjorn = GameObject(Transform(glm::vec3(0, 0, -5)));
     Bjorn.AddComponent<MeshRenderer>(new MeshRenderer(mesh, cubeMat, "meshShader"));
