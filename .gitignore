@@ -1,9 +1,6 @@
 build/
 *.swp
 
-# example executables
-example1
-
 # Prerequisites
 *.d
 

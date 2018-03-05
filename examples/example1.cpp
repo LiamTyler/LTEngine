@@ -26,6 +26,7 @@ int main() {
 
     Camera camera = Camera();
     camera.AddComponent<CameraController>(new CameraController(4, .005));
+    camera.transform.position.z += 3;
 
     bool quit = false;
     window.SetRelativeMouse(true);

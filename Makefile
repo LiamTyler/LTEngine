@@ -18,9 +18,11 @@ LIBNAME = libProgression.a
 LIBPATH = $(BUILDDIR)/$(LIBNAME)
 LIBLINK = -L$(BUILDDIR) -lProgression
 
-EXAMPLEDIR = $(MAINDIR)/examples
-EXAMPLE_SRC = $(notdir $(call rwildcard,$(EXAMPLEDIR),*.cpp))
-EXAMPLE_EXES = $(basename $(EXAMPLE_SRC))
+EXAMPLE_SRC_DIR = $(MAINDIR)/examples
+EXAMPLE_SRCS = $(notdir $(call rwildcard,$(EXAMPLE_SRC_DIR),*.cpp))
+EXAMPLE_EXES = $(basename $(EXAMPLE_SRCS))
+EXAMPLE_BUILD_DIR = $(BUILDDIR)/examples
+
 
 .PHONY: all clean lib examples info
 
@@ -32,7 +34,7 @@ clean:
 
 lib: $(LIBPATH)
 
-examples: $(addprefix $(EXAMPLEDIR)/, $(EXAMPLE_EXES))
+examples: $(addprefix $(EXAMPLE_BUILD_DIR)/, $(EXAMPLE_EXES))
 
 $(LIBPATH): $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)) | $(BINDIR)
 	rm -f $(LIBPATH)
@@ -44,12 +46,12 @@ endif
 
 $(addprefix $(OBJDIR)/, $(OBJECTS_CXX)): | $(OBJDIR)
 
-$(BINDIR) $(OBJDIR):
+$(BINDIR) $(OBJDIR) $(EXAMPLE_BUILD_DIR):
 	mkdir -p $@
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.cpp
 	@$(call make-depend-cxx,$<,$@,$(subst .o,.d,$@))
 	$(CXX) $(CXXFLAGS) $(CXXLIBS) -c -o $@ $<
 
-$(EXAMPLEDIR)/%: $(EXAMPLEDIR)/%.cpp $(LIBPATH)
+$(EXAMPLE_BUILD_DIR)/%: $(EXAMPLE_SRC_DIR)/*.cpp $(LIBPATH) | $(EXAMPLE_BUILD_DIR)
 	$(CXX) $< $(LIBLINK) $(CXXFLAGS) $(CXXLIBS) -o $@
