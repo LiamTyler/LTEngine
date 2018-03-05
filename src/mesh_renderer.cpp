@@ -16,7 +16,6 @@ MeshRenderer::~MeshRenderer() {}
 void MeshRenderer::Start() {
     Shader& shader = *renderer->GetShader(shaderID_);
     RID id = mesh_->rid;
-    std::cout << "in mesh rc start" << std::endl;
     if (!renderer->VaoExists(id)) {
         GLuint vao = renderer->CreateAndRegisterVao(shaderID_, id, this);
         GLuint* vbos = renderer->CreateVbos(3);
