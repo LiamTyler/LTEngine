@@ -50,7 +50,7 @@ void MeshRenderer::Update(float dt) {
 void MeshRenderer::Stop() {
 }
 
-void MeshRenderer::Render(Shader& shader, glm::mat4& V) {
+void MeshRenderer::Render(Shader& shader, const Camera& camera) {
     // send material
     glUniform4fv(shader["ka"], 1, value_ptr(material_->ka));
     glUniform4fv(shader["kd"], 1, value_ptr(material_->kd));
@@ -65,7 +65,7 @@ void MeshRenderer::Render(Shader& shader, glm::mat4& V) {
 
     // send model and normal matrices
     glm::mat4 model = gameObject->transform.GetModelMatrix();
-    glm::mat4 MV = V * model;
+    glm::mat4 MV = camera.GetV() * model;
     glm::mat4 normalMatrix = glm::transpose(glm::inverse(MV));
     glUniformMatrix4fv(shader["modelViewMatrix"], 1, GL_FALSE, value_ptr(MV));
     glUniformMatrix4fv(shader["normalMatrix"], 1, GL_FALSE, value_ptr(normalMatrix));

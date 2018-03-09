@@ -13,7 +13,7 @@ class MeshRenderer : public RenderComponent {
         void Start();
         void Update(float dt);
         void Stop();
-        void Render(Shader& shader, glm::mat4& V);
+        void Render(Shader& shader, const Camera& camera);
 
     protected:
         Mesh* mesh_;

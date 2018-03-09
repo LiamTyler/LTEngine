@@ -40,15 +40,15 @@ void Camera::UpdateProjectionMatrix() {
     projectionMatrix = glm::perspective(FOV, aspectRatio, nearPlane, farPlane);
 }
 
-glm::mat4 Camera::GetV() { return viewMatrix; }
-glm::mat4 Camera::GetP() { return projectionMatrix; }
-float Camera::GetFOV() { return FOV; }
-float Camera::GetAspectRatio() { return aspectRatio; }
-float Camera::GetNearPlane() { return nearPlane; }
-float Camera::GetFarPlane() { return farPlane; }
-glm::vec3 Camera::GetForwardDir() { return currDir; }
-glm::vec3 Camera::GetUpDir() { return currUp; }
-glm::vec3 Camera::GetRightDir() { return currRight; }
+glm::mat4 Camera::GetV() const { return viewMatrix; }
+glm::mat4 Camera::GetP() const { return projectionMatrix; }
+float Camera::GetFOV() const { return FOV; }
+float Camera::GetAspectRatio() const { return aspectRatio; }
+float Camera::GetNearPlane() const { return nearPlane; }
+float Camera::GetFarPlane() const { return farPlane; }
+glm::vec3 Camera::GetForwardDir() const { return currDir; }
+glm::vec3 Camera::GetUpDir() const { return currUp; }
+glm::vec3 Camera::GetRightDir() const { return currRight; }
 
 void Camera::SetFOV(float f) {
     FOV = f;

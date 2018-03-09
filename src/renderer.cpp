@@ -3,7 +3,7 @@
 Renderer::Renderer() {
     // load default mesh shader
     AddShader("meshShader", "shaders/regular_phong.vert",
-            "shaders/regular_phong.frag", "");
+              "shaders/regular_phong.frag", "");
 }
 
 Renderer::~Renderer() {
@@ -15,7 +15,6 @@ Renderer::~Renderer() {
 
 Shader* Renderer::GetShader(const std::string& id) {
     assert(shader_mapping_.find(id) != shader_mapping_.end());
-
     return shaders_[shader_mapping_[id]];
 }
 
@@ -41,6 +40,18 @@ void Renderer::Register(RID r, RenderComponent* rc) {
     ShaderGroup& sg = shaderGroups_[map.shaderGroup];
     VaoGroup& vg = sg.vaoGroups_[map.vaoGroup];
     vg.objects_.push_back(rc);
+}
+
+GLuint Renderer::CreateNonResourceVao(const std::string& shaderID, RenderComponent* rc) {
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    vaos_.push_back(vao);
+    VaoGroup group;
+    group.vao_index = vaos_.size() - 1;
+    group.objects_.push_back(rc);
+    ShaderGroup& sg = shaderGroups_[shader_mapping_[shaderID]];
+    sg.vaoGroups_.push_back(group);
+    return vao;
 }
 
 GLuint Renderer::CreateAndRegisterVao(const std::string& shaderID, RID r, RenderComponent* rc) {
@@ -69,14 +80,14 @@ GLuint* Renderer::CreateVbos(int num) {
 void Renderer::RenderScene(Camera& camera) {
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glm::mat4 V = camera.GetV();
     glm::mat4 P = camera.GetP();
+    glm::mat4 V = camera.GetV();
 
     // hard code the light right now
     glm::vec4 lightDir = glm::normalize(glm::vec4(-1, -.5, -.8, 0));
     glm::vec4 Ia = glm::vec4(.3, .3, .3, 1);
-    glm::vec4 Id = glm::vec4(.3, .3, .3, 1);
-    glm::vec4 Is = glm::vec4(.3, .3, .3, 1);
+    glm::vec4 Id = glm::vec4(.7, .7, .7, 1);
+    glm::vec4 Is = glm::vec4(1.0, 1.0, 1.0, 1);
 
     for (auto& sg : shaderGroups_) {
         Shader& shader = *shaders_[sg.shader_index];
@@ -91,7 +102,7 @@ void Renderer::RenderScene(Camera& camera) {
         for (auto& vg : sg.vaoGroups_) {
             glBindVertexArray(vaos_[vg.vao_index]);
             for (auto& obj : vg.objects_) {
-                obj->Render(shader, V);
+                obj->Render(shader, camera);
             }
         }
     }

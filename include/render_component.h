@@ -4,6 +4,7 @@
 #include "include/component.h"
 #include "include/material.h"
 #include "include/glsl_shader.h"
+#include "include/camera.h"
 
 class RenderComponent : public Component {
     public:
@@ -13,7 +14,7 @@ class RenderComponent : public Component {
         virtual void Start() = 0;
         virtual void Update(float dt) = 0;
         virtual void Stop() = 0;
-        virtual void Render(Shader& shader, glm::mat4& V) = 0;
+        virtual void Render(Shader& shader, const Camera& camera) = 0;
 
     protected:
         Material* material_;

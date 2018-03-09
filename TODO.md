@@ -7,3 +7,6 @@
 - [ ] Add scene file loading
 - [x] Add nicer makefile integration for projects trying to use Progression
 - [x] Add example makefile and how to install + build
+- [ ] Add better support for 2D shapes and lines
+- [ ] Makefile still doesnt detect all of the dependencies
+- [ ] Dont update light material for all shaders if they dont need it
