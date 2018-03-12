@@ -31,7 +31,6 @@ class Window {
         // SDL specifics
         SDL_Window* sdlWindow_;
         SDL_GLContext glContext_;
-
 };
 
 #endif  // INCLUDE_WINDOW_H_

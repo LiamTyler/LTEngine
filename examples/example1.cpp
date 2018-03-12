@@ -19,14 +19,23 @@ int main() {
     Mesh* cubeMesh = resourceManager->LoadMesh("models/cube.obj");
     Mesh* sphereMesh = resourceManager->LoadMesh("models/sphere.obj");
 
-    GameObject cube = GameObject(Transform(glm::vec3(2, 0, -5)));
-    cube.AddComponent<MeshRenderer>(new MeshRenderer(cubeMesh, redMat, "meshShader"));
-    GameObject sphere = GameObject(Transform(glm::vec3(-2, 0, -5)));
-    sphere.AddComponent<MeshRenderer>(new MeshRenderer(sphereMesh, blueMat, "meshShader"));
+    GameObject* cube = new GameObject(Transform(glm::vec3(2, 0, -5)));
+    GameObject* sphere = new GameObject(Transform(glm::vec3(-2, 0, -5)));
 
-    Camera camera = Camera();
-    camera.AddComponent<CameraController>(new CameraController(4, .005));
-    camera.transform.position.z += 3;
+    Camera* camera = new Camera;
+    camera->AddComponent<CameraController>(new CameraController(4, .005));
+    camera->transform.position.z += 3;
+
+    Background* background = new Background(glm::vec3(1, 0, 0));
+
+    DirectionalLight* dirLight = new DirectionalLight;
+
+    Scene scene;
+    scene.AddGameObject(cube);
+    scene.AddGameObject(sphere);
+    scene.camera = camera;
+    scene.background = background;
+    scene.AddLight(dirLight);
 
     bool quit = false;
     window.SetRelativeMouse(true);
@@ -37,10 +46,8 @@ int main() {
             quit = true;
 
         float dt = window.GetDT();
-        camera.Update(dt);
-        cube.Update(dt);
-        sphere.Update(dt);
-        renderer->RenderScene(camera);
+
+        renderer->RenderScene(scene);
 
         window.EndFrame();
     }

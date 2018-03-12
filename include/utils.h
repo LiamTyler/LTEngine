@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <iostream>
 #include <cstdlib>
+#include <vector>
 #include "glm/glm.hpp"
 #include "glm/ext.hpp"
 

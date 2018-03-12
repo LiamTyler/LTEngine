@@ -25,11 +25,7 @@ class Shader {
         GLuint operator[] (const std::string& name);
         void DeleteShaderProgram();
         GLuint GetProgram() { return program_; }
-
         std::string& ID() { return id_; }
-
-        // GLuint GetProgram() { return program_; }
-        // void SetProgram(GLuint p) { program_ = p; }
 
     protected:
         std::string id_;
