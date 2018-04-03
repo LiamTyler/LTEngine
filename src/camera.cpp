@@ -16,6 +16,7 @@ Camera::Camera(Transform t, float fov, float a, float np, float fp) : GameObject
     aspectRatio = a;
     nearPlane = np;
     farPlane = fp;
+    UpdateOrientationVectors();
     UpdateProjectionMatrix();
     UpdateViewMatrix();
 }
